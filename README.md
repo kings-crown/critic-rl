@@ -24,16 +24,11 @@ We propose **CTRL**, a framework that trains LLMs to critique **without human su
 
 ## 🎯 Key Results
 
-<div style="display: flex; justify-content: center; gap: 1px; margin-top: 20px;">
-  <figure style="text-align: center; width: 48%;">
-    <img src="https://critic-rl.github.io/static/images/scaling_v3.png" style="width: 100%;" alt="Test-time Scaling Performance">
-    <figcaption>Pass@1 improves substantially after multi-turn iterations with CTRL critics.</figcaption>
-  </figure>
-  <figure style="text-align: center; width: 48%;">
-    <img src="https://critic-rl.github.io/static/images/c2w.png" style="width: 100%;" alt="Error Compounding Analysis">
-    <figcaption>CTRL maintains lower correct→incorrect rates across iterations compared to baselines.</figcaption>
-  </figure>
-</div>
+<p align="center">
+  <img alt="Light" src="https://critic-rl.github.io/static/images/scaling_v3.png" width="45%">
+&nbsp; &nbsp; &nbsp; &nbsp;
+  <img alt="Dark" src="https://critic-rl.github.io/static/images/c2w.png" width="45%">
+</p>
 
 - **Test-time Scaling**: Qwen2.5-Coder-32B-Ins with the CTRL critic achieves 106.1% relative improvement in Pass@1 on CodeContests through multi-turn critique-revision, while maintaining low error rates across iterations
 
