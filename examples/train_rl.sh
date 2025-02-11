@@ -1,0 +1,52 @@
+base_model="path_to_sft_model"
+generator_model="path_to_generator_model"
+project_name="critic_rl"
+experiment_name="grpo"
+train_files="['train.parquet']"
+val_files="['val.parquet']"
+
+base_model="Qwen/Qwen2.5-Coder-7B-Instruct"
+generator_model="Qwen/Qwen2.5-Coder-7B-Instruct"
+project_name="critic_rl"
+experiment_name="grpo"
+train_files="['qwen25-32b-train-alluts-assert.parquet']"
+val_files="['qwen25-32b-train-alluts-assert.parquet']"
+
+export VLLM_ATTENTION_BACKEND=XFORMERS
+
+python3 scripts/run_rl.py \
+    algorithm.adv_estimator=grpo \
+    algorithm.kl_penalty=grpo \
+    data.train_files=$train_files \
+    data.val_files=$val_files \
+    data.train_batch_size=1024 \
+    data.val_batch_size=128 \
+    data.max_model_length=1024 \
+    data.max_prompt_length=1024 \
+    data.max_response_length=1024 \
+    actor_rollout_ref.model.path="$base_model" \
+    actor_rollout_ref.model.enable_gradient_checkpointing=True \
+    actor_rollout_ref.actor.optim.lr=1e-5 \
+    actor_rollout_ref.actor.ppo_mini_batch_size=256 \
+    actor_rollout_ref.actor.ppo_micro_batch_size=64 \
+    actor_rollout_ref.actor.fsdp_config.param_offload=True \
+    actor_rollout_ref.actor.fsdp_config.grad_offload=True \
+    actor_rollout_ref.actor.fsdp_config.optimizer_offload=True \
+    actor_rollout_ref.rollout.log_prob_micro_batch_size=128 \
+    actor_rollout_ref.rollout.tensor_model_parallel_size=1 \
+    actor_rollout_ref.rollout.name=vllm \
+    actor_rollout_ref.rollout.gpu_memory_utilization=0.8 \
+    actor_rollout_ref.rollout.n=8 \
+    actor_rollout_ref.ref.log_prob_micro_batch_size=128 \
+    actor_rollout_ref.ref.fsdp_config.param_offload=True \
+    actor_rollout_ref.proxy.model.path="$generator_model" \
+    critic.use_dynamic_bsz=True \
+    algorithm.kl_ctrl.kl_coef=0.001 \
+    trainer.logger=['console','wandb'] \
+    trainer.project_name="$project_name" \
+    trainer.experiment_name="$experiment_name" \
+    trainer.n_gpus_per_node=8 \
+    trainer.nnodes=8 \
+    trainer.total_epochs=1 \
+    trainer.save_freq=5 \
+    trainer.test_freq=5
