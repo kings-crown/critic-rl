@@ -35,8 +35,7 @@ for split in ds.keys():
             text = re.sub(r".*?(Here's how you can structure the proof in Isabelle:|Here is a structured Isabelle proof for the lemma:|Here's how you might structure the proof:)", "", text, flags=re.DOTALL).strip()
             return text
         return text
-
-    df["formal_proof"] = df["formal_proof"].apply(clean_proof_text)
+        
     df["isabelle_body"] = df["isabelle_body"].apply(clean_proof_text)
 
     # Extract only content between ':' and 'qed' in Isabelle body
